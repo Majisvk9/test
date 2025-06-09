@@ -7,7 +7,7 @@ form.addEventListener("submit", async (e) => {
   const password = document.getElementById("password").value.trim();
 
   try {
-    const response = await fetch("https://script.google.com/macros/s/AKfycbwLkP5L9h9Uq8svZa0tJwNBsfp3K4Hgn4b3U1_qO6wdfBcunKPF62Qg8yoUIZQUm_utYw/exec", {
+    const response = await fetch("https://script.google.com/macros/s/AKfycbxhedIe_3optwkjkHt9sncwWWM5AwnjUohWRqJOz8fbux9nf4P1Bmem7YWZZu4urFSzxA/exec", {
       method: "POST",
       body: JSON.stringify({ username, password }),
       headers: { "Content-Type": "application/json" }

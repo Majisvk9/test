@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Inventory - Products</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .container { padding: 20px; max-width: 800px; margin: auto; }
+    h2 { color: #3498db; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background-color: #ecf0f1; }
+    input, button { padding: 8px; margin-top: 10px; margin-right: 10px; }
+    .deleteBtn { background: #e74c3c; color: white; border: none; padding: 6px 10px; cursor: pointer; }
+    .deleteBtn:hover { background: #c0392b; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Product List</h2>
+    <form id="addProductForm">
+      <input type="text" id="name" placeholder="Name" required />
+      <input type="text" id="brand" placeholder="Brand" />
+      <input type="text" id="size" placeholder="Size" />
+      <input type="number" id="price" placeholder="Price" required />
+      <input type="number" id="stock" placeholder="Stock" required />
+      <button type="submit">Add Product</button>
+    </form>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Brand</th>
+          <th>Size</th>
+          <th>Price</th>
+          <th>Stock</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="productTableBody"></tbody>
+    </table>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script>
+    const SHEET_API = "https://script.google.com/macros/s/AKfycbzq_Q4AJxQdZBJktQMRgHvKv2Ci7vTreXuHc86M9b3HNttjiYbFy9_f-nXxC-3E8Z0IAQ/exec
+"; // Replace this
+
+    // Protect route
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user) window.location.href = "index.html";
+
+    const tableBody = document.getElementById("productTableBody");
+    const form = document.getElementById("addProductForm");
+
+    async function fetchProducts() {
+      const res = await fetch(SHEET_API);
+      const data = await res.json();
+      tableBody.innerHTML = "";
+      data.forEach(product => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${product.name}</td>
+          <td>${product.brand}</td>
+          <td>${product.size}</td>
+          <td>₹${product.price}</td>
+          <td>${product.stock}</td>
+          <td><button class="deleteBtn" onclick="deleteProduct('${product.id}')">Delete</button></td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    async function deleteProduct(id) {
+      if (!confirm("Are you sure to delete this product?")) return;
+      await fetch(`${SHEET_API}?id=${id}`, { method: "DELETE" });
+      fetchProducts();
+    }
+
+    form.addEventListener("submit", async e => {
+      e.preventDefault();
+      const data = {
+        name: document.getElementById("name").value,
+        brand: document.getElementById("brand").value,
+        size: document.getElementById("size").value,
+        price: document.getElementById("price").value,
+        stock: document.getElementById("stock").value,
+      };
+
+      await fetch(SHEET_API, {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: { "Content-Type": "application/json" }
+      });
+
+      form.reset();
+      fetchProducts();
+    });
+
+    // Load products on page load
+    fetchProducts();
+  </script>
+</body>
+</html>

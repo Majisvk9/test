@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard - Inventory Ace</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .dashboard {
+      max-width: 600px;
+      margin: 100px auto;
+      text-align: center;
+    }
+
+    .dashboard h1 {
+      color: #3498db;
+    }
+
+    .dashboard button {
+      margin-top: 20px;
+      background-color: #e74c3c;
+      padding: 10px 20px;
+      border: none;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .dashboard button:hover {
+      background-color: #c0392b;
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <h1>Welcome to Inventory Ace</h1>
+    <p id="userInfo"></p>
+    <button onclick="logout()">Logout</button>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script>
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user) {
+      window.location.href = "index.html";
+    } else {
+      document.getElementById("userInfo").textContent = "Logged in as: " + user.username;
+    }
+  </script>
+</body>
+</html>
